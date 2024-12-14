@@ -1,5 +1,5 @@
 from aocd import get_data
-import numpy
+import sympy
 
 data = get_data(year=2024, day=13)
 
@@ -34,15 +34,15 @@ for line in data.splitlines():
         by = int(bY)
     if line.startswith("Prize"):
         pX, pY = line.strip("Prize: X=").split(", Y=")
-        pX = int(pX)
-        pY = int(pY)
-        cases.append((numpy.array([[aX, bX], [aY, bY]], dtype=numpy.double), numpy.array([pX, pY], dtype=numpy.double)))
+        pX = int(pX) + 10000000000000
+        pY = int(pY) + 10000000000000
+        cases.append((sympy.Matrix([[aX, bX], [aY, bY]]), sympy.Matrix([pX, pY])))
 
-total = 0
+total = int(0)
 
 for case in cases:
-    solution = numpy.linalg.solve(case[0], case[1])
-    if numpy.absolute(solution[0] - round(solution[0])) < 1e-12 and numpy.absolute(solution[1] - round(solution[1])) < 1e-12:
+    solution = case[0].inv() * case[1]
+    if isinstance(solution[0], sympy.core.numbers.Integer) and isinstance(solution[1], sympy.core.numbers.Integer):
         total += solution[0] * 3 + solution[1]
 
 print(total)
